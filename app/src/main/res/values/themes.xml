@@ -5,7 +5,7 @@
         <item name="colorSecondary">@color/accent_lime</item>
         <item name="colorSurface">@color/bg_dark</item>
         <item name="colorOnSurface">@color/text_primary</item>
-        <item name="android:windowBackground">@color/bg_deep</item>
+        <item name="android:windowBackground">@color/bg_deep</item>  <!-- #4B5563 -->
         <item name="android:navigationBarColor">@color/bg_dark</item>
         <item name="android:statusBarColor">@color/bg_dark</item>
     </style>
