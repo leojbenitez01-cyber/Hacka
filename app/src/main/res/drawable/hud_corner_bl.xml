@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Línea horizontal inferior -->
+    <item android:top="18dp">
+        <color android:color="#00D4FF"/>
+    </item>
+    <!-- Línea vertical izquierda -->
+    <item android:right="18dp">
+        <color android:color="#00D4FF"/>
+    </item>
+</layer-list>

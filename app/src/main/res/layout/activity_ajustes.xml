@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4B5563">
+    android:background="#04080F">
 
     <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_grid_hud" />
 
@@ -26,7 +26,7 @@
 
             <!-- Header -->
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ajustes" android:textColor="#E2EAF4" android:textSize="24sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PARÁMETROS DE OPERACIÓN" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.06" android:fontFamily="monospace" android:layout_marginBottom="20dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PARÁMETROS DE OPERACIÓN" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.06" android:fontFamily="monospace" android:layout_marginBottom="20dp" />
 
             <!-- ── BLOQUE DE USUARIO ──────────────────────────── -->
 
@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#4B5563"
+                android:background="@drawable/bg_hud_box"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginBottom="20dp">
@@ -98,7 +98,7 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Comandos de voz" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MANOS LIBRES ACTIVO" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MANOS LIBRES ACTIVO" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
                     </LinearLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchVoice"
@@ -116,7 +116,7 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Asistente IA" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GUÍA CONTEXTUAL" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GUÍA CONTEXTUAL" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
                     </LinearLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchAI"
@@ -134,7 +134,7 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Audio feedback" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONFIRMACIÓN SONORA" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONFIRMACIÓN SONORA" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
                     </LinearLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchAudio"
@@ -152,7 +152,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#4B5563"
+                android:background="@drawable/bg_hud_box"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginBottom="20dp">
@@ -164,7 +164,7 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Etiquetas AR" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="OVERLAY COMPONENTES" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="OVERLAY COMPONENTES" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
                     </LinearLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchArLabels"
@@ -182,7 +182,7 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Modelos 3D en AR" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPERPOSICIÓN VISUAL" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPERPOSICIÓN VISUAL" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
                     </LinearLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchAr3d"
@@ -218,7 +218,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
-        android:background="#4B5563"
+        android:background="#080E1A"
         app:itemIconTint="@drawable/nav_item_color"
         app:itemTextColor="@drawable/nav_item_color"
         app:menu="@menu/bottom_nav_menu"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="#04080F"/>
+    </item>
+    <!-- Gradiente radial sutil estilo HUD -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="150%"
+                android:startColor="#08152A"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+</layer-list>

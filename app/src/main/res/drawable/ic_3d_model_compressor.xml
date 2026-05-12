@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    <!-- Cuerpo principal del compresor industrial -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,20H70V60H10V20zM14,24V56H66V24H14z"/>
+    <!-- Cilindros -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,12H30V24H20V12zM50,12H60V24H50V12z"/>
+    <!-- Ventilador/rueda -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,30m-8,0a8,8 0,1 1,16 0a8,8 0,1 1,-16 0"/>
+    <!-- Tuberías -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,40H4V44H14V40zM66,40H76V44H66V40z"/>
+    <!-- Detalles del panel -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M22,44H30V52H22V44zM50,44H58V52H50V44z"/>
+    <!-- Patas base -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,60H24V68H16V60zM56,60H64V68H56V60z"/>
+</vector>
