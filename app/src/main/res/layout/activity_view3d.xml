@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#04080F">
+
+    <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_grid_hud" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- Top actions row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_icon_btn"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="#5A7A9A"
+                    android:contentDescription="Volver" />
+
+                <Space android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/btnManual"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_icon_btn"
+                    android:src="@drawable/ic_book"
+                    app:tint="#5A7A9A"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="Manual" />
+
+                <ImageButton
+                    android:id="@+id/btnInfo"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_icon_btn"
+                    android:src="@drawable/ic_info"
+                    app:tint="#5A7A9A"
+                    android:contentDescription="Info" />
+            </LinearLayout>
+
+            <!-- Header -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vista 3D Interactiva" android:textColor="#E2EAF4" android:textSize="20sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="COMPRESOR INDUSTRIAL A-12" android:textColor="#5A7A9A" android:textSize="10sp" android:letterSpacing="0.06" android:fontFamily="monospace" android:layout_marginBottom="16dp" />
+
+            <!-- ── VISOR 3D ──────────────────────────────────────── -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:background="@drawable/bg_model_stage"
+                android:layout_marginBottom="12dp">
+
+                <!--
+                    Aquí va el Fragment de SceneView para el modelo GLTF/GLB.
+                    En producción reemplazar por:
+                    <fragment android:name="io.github.sceneview.SceneView" ... />
+                    Por ahora se usa una ImageView placeholder del modelo.
+                -->
+                <ImageView
+                    android:id="@+id/modelPlaceholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_3d_model_compressor"
+                    app:tint="#00D4FF"
+                    android:alpha="0.75"
+                    android:contentDescription="Modelo 3D Compresor A-12" />
+
+                <!-- Controles del modelo (columna derecha) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="10dp">
+
+                    <ImageButton
+                        android:id="@+id/btnRotate"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_model_ctrl"
+                        android:src="@drawable/ic_rotate"
+                        app:tint="#E2EAF4"
+                        android:layout_marginBottom="6dp"
+                        android:contentDescription="Rotar modelo" />
+
+                    <ImageButton
+                        android:id="@+id/btnZoomIn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_model_ctrl"
+                        android:src="@drawable/ic_zoom_in"
+                        app:tint="#E2EAF4"
+                        android:layout_marginBottom="6dp"
+                        android:contentDescription="Acercar" />
+
+                    <ImageButton
+                        android:id="@+id/btnZoomOut"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_model_ctrl"
+                        android:src="@drawable/ic_zoom_out"
+                        app:tint="#E2EAF4"
+                        android:layout_marginBottom="6dp"
+                        android:contentDescription="Alejar" />
+
+                    <ImageButton
+                        android:id="@+id/btnExpand"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_model_ctrl"
+                        android:src="@drawable/ic_expand"
+                        app:tint="#E2EAF4"
+                        android:contentDescription="Ver en AR" />
+                </LinearLayout>
+
+                <!-- Label inferior -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:text="VISTA DE MODELO 3D — TOCA PARA INTERACTUAR"
+                    android:textColor="#5A7A9A"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.06"
+                    android:fontFamily="monospace" />
+            </FrameLayout>
+
+            <!-- ── COMPONENTES ────────────────────────────────────── -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="COMPONENTES" android:textColor="#5A7A9A" android:textSize="9sp" android:letterSpacing="0.12" android:fontFamily="monospace" android:layout_marginBottom="8dp" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:layout_marginBottom="14dp">
+
+                <!-- Motor Principal -->
+                <LinearLayout
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_comp_card_cyan"
+                    android:padding="12dp"
+                    android:layout_marginEnd="4dp" android:layout_marginBottom="4dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Motor Principal" android:textColor="#E2EAF4" android:textSize="13sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TEMP: 72°C" android:textColor="#5A7A9A" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginBottom="4dp" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_dot_lime" android:layout_marginEnd="4dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NOMINAL" android:textColor="#39FF14" android:textSize="10sp" android:letterSpacing="0.04" android:fontFamily="monospace" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Válvula de Presión (warn) -->
+                <LinearLayout
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_comp_card_amber"
+                    android:padding="12dp"
+                    android:layout_marginStart="4dp" android:layout_marginBottom="4dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Válvula Presión" android:textColor="#E2EAF4" android:textSize="13sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TEMP: 45°C" android:textColor="#5A7A9A" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:letterSpacing="0.04"
+                        android:text="REVISAR"
+                        android:textColor="#FFB700"
+                        android:textSize="10sp" />
+
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                        <View android:id="@+id/dotValveComp" android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_dot_amber_blink" android:layout_marginEnd="4dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Filtro de Aire -->
+                <LinearLayout
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_comp_card_cyan"
+                    android:padding="12dp"
+                    android:layout_marginEnd="4dp" android:layout_marginTop="4dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filtro de Aire" android:textColor="#E2EAF4" android:textSize="13sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TEMP: 38°C" android:textColor="#5A7A9A" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginBottom="4dp" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_dot_lime" android:layout_marginEnd="4dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NOMINAL" android:textColor="#39FF14" android:textSize="10sp" android:letterSpacing="0.04" android:fontFamily="monospace" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Rodamiento -->
+                <LinearLayout
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" android:layout_rowWeight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_comp_card_cyan"
+                    android:padding="12dp"
+                    android:layout_marginStart="4dp" android:layout_marginTop="4dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rodamiento" android:textColor="#E2EAF4" android:textSize="13sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TEMP: 65°C" android:textColor="#5A7A9A" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginBottom="4dp" />
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                        <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/shape_dot_lime" android:layout_marginEnd="4dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="NOMINAL" android:textColor="#39FF14" android:textSize="10sp" android:letterSpacing="0.04" android:fontFamily="monospace" />
+                    </LinearLayout>
+                </LinearLayout>
+            </GridLayout>
+
+            <!-- ── CONTROLES POR VOZ ──────────────────────────────── -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONTROLES POR VOZ" android:textColor="#5A7A9A" android:textSize="9sp" android:letterSpacing="0.12" android:fontFamily="monospace" android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Zoom -->
+                <LinearLayout
+                    android:id="@+id/vcZoom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_vc_btn"
+                    android:padding="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_zoom_in" app:tint="#00D4FF" android:layout_marginBottom="4dp" android:contentDescription="Zoom" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text='"Zoom"' android:textColor="#E2EAF4" android:textSize="11sp" android:textStyle="bold" android:fontFamily="monospace" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ACERCAR" android:textColor="#5A7A9A" android:textSize="9sp" android:letterSpacing="0.05" android:fontFamily="monospace" />
+                </LinearLayout>
+
+                <!-- Rotar -->
+                <LinearLayout
+                    android:id="@+id/vcRotate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_vc_btn"
+                    android:padding="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_rotate" app:tint="#00D4FF" android:layout_marginBottom="4dp" android:contentDescription="Rotar" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text='"Rotar"' android:textColor="#E2EAF4" android:textSize="11sp" android:textStyle="bold" android:fontFamily="monospace" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GIRAR" android:textColor="#5A7A9A" android:textSize="9sp" android:letterSpacing="0.05" android:fontFamily="monospace" />
+                </LinearLayout>
+
+                <!-- Siguiente -->
+                <LinearLayout
+                    android:id="@+id/vcNext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_vc_btn"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_arrow_forward" app:tint="#00D4FF" android:layout_marginBottom="4dp" android:contentDescription="Siguiente" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text='"Siguiente"' android:textColor="#E2EAF4" android:textSize="11sp" android:textStyle="bold" android:fontFamily="monospace" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="COMPONENTE" android:textColor="#5A7A9A" android:textSize="9sp" android:letterSpacing="0.05" android:fontFamily="monospace" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="#080E1A"
+        app:itemIconTint="@drawable/nav_item_color"
+        app:itemTextColor="@drawable/nav_item_color"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

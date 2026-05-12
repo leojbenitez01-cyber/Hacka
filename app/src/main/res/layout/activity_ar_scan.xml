@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ARVoice Maintenance — activity_ar_scan.xml
+    Pantalla: Escaneo AR + Voz (pantalla crítica de manos libres)
+    Usa CameraX preview como fondo real; aquí se define la capa de UI sobre ella.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#04080F">
+
+    <!-- ── CÁMARA AR (CameraX PreviewView) ───────────────────── -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/cameraPreview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/scanPanel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Grid de fondo HUD (se muestra solo si cámara no disponible) -->
+    <View
+        android:id="@+id/hudGrid"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_grid_hud"
+        android:alpha="0.4"
+        app:layout_constraintTop_toTopOf="@id/cameraPreview"
+        app:layout_constraintBottom_toBottomOf="@id/cameraPreview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ── TOP OVERLAY: BARRA SUPERIOR ───────────────────────── -->
+    <LinearLayout
+        android:id="@+id/topOverlay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="@drawable/gradient_top_overlay"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Botón cerrar -->
+        <FrameLayout
+            android:id="@+id/btnClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_close_btn"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_close"
+                app:tint="#E2EAF4" />
+        </FrameLayout>
+
+        <!-- Modo label -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="MODO AR ACTIVO"
+            android:textColor="#5A7A9A"
+            android:textSize="10sp"
+            android:letterSpacing="0.08"
+            android:fontFamily="monospace"
+            android:gravity="center" />
+
+        <!-- Status AR ACTIVO -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_ar_status"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+            <View
+                android:id="@+id/dotArLive"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/shape_dot_lime" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="AR ACTIVO"
+                android:textColor="#39FF14"
+                android:textSize="11sp"
+                android:letterSpacing="0.06"
+                android:fontFamily="monospace" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Enfoque label -->
+    <LinearLayout
+        android:id="@+id/focusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/topOverlay"
+        app:layout_constraintStart_toStartOf="parent">
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_focus"
+            app:tint="#00D4FF" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="ENFOQUE OBJETIVO — COMPRESOR A-12"
+            android:textColor="#00D4FF"
+            android:textSize="10sp"
+            android:letterSpacing="0.06"
+            android:fontFamily="monospace" />
+    </LinearLayout>
+
+    <!-- ── MARCO DE CÁMARA con esquinas HUD ───────────────────── -->
+    <FrameLayout
+        android:id="@+id/camFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_cam_frame"
+        app:layout_constraintTop_toBottomOf="@id/focusLabel"
+        app:layout_constraintBottom_toTopOf="@id/waveformBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Esquinas HUD (vistas decorativas, posicionadas con ConstraintLayout interno) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Esquina TL -->
+            <View android:id="@+id/cornerTL"
+                android:layout_width="20dp" android:layout_height="20dp"
+                android:background="@drawable/hud_corner_tl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+            <!-- Esquina TR -->
+            <View android:id="@+id/cornerTR"
+                android:layout_width="20dp" android:layout_height="20dp"
+                android:background="@drawable/hud_corner_tr"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+            <!-- Esquina BL -->
+            <View android:id="@+id/cornerBL"
+                android:layout_width="20dp" android:layout_height="20dp"
+                android:background="@drawable/hud_corner_bl"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+            <!-- Esquina BR -->
+            <View android:id="@+id/cornerBR"
+                android:layout_width="20dp" android:layout_height="20dp"
+                android:background="@drawable/hud_corner_br"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Línea de barrido (animada en código: ObjectAnimator Y 0→bottom) -->
+            <View
+                android:id="@+id/scanSweepLine"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@drawable/gradient_scan_sweep"
+                android:alpha="0.75"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- ── AR TAGS (posicionadas absolutas desde código) ── -->
+
+            <!-- Etiqueta: Motor Principal (ok) -->
+            <LinearLayout
+                android:id="@+id/arTagMotor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_ar_tag_cyan"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:background="@drawable/shape_dot_lime" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="MOTOR PPAL"
+                    android:textColor="#00D4FF"
+                    android:textSize="9sp"
+                    android:letterSpacing="0.05"
+                    android:fontFamily="monospace" />
+            </LinearLayout>
+
+            <!-- Etiqueta: Válvula (warn) -->
+            <LinearLayout
+                android:id="@+id/arTagValve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_ar_tag_amber"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginTop="65dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <View
+                    android:id="@+id/dotValve"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:background="@drawable/shape_dot_amber_blink" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="VÁLVULA"
+                    android:textColor="#FFB700"
+                    android:textSize="9sp"
+                    android:letterSpacing="0.05"
+                    android:fontFamily="monospace" />
+            </LinearLayout>
+
+            <!-- Etiqueta: Filtro Aire (ok) -->
+            <LinearLayout
+                android:id="@+id/arTagFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_ar_tag_cyan"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginBottom="55dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:background="@drawable/shape_dot_lime" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="FILTRO AIRE"
+                    android:textColor="#00D4FF"
+                    android:textSize="9sp"
+                    android:letterSpacing="0.05"
+                    android:fontFamily="monospace" />
+            </LinearLayout>
+
+            <!-- Retículo de mira sobre la válvula (crosshair) -->
+            <View
+                android:id="@+id/reticle"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_reticle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="108dp"
+                android:layout_marginStart="95dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <!-- ── WAVEFORM — indicador de escucha activa ─────────────── -->
+    <!--
+        Las 11 barras se animan en código con ValueAnimator (altura 4dp → max)
+        Aquí se definen como views de altura fija; el Animator las modifica.
+    -->
+    <LinearLayout
+        android:id="@+id/waveformBar"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@id/scanPanel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View android:id="@+id/wf1"  android:layout_width="3dp" android:layout_height="8dp"  android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf2"  android:layout_width="3dp" android:layout_height="20dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf3"  android:layout_width="3dp" android:layout_height="26dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf4"  android:layout_width="3dp" android:layout_height="18dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf5"  android:layout_width="3dp" android:layout_height="28dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf6"  android:layout_width="3dp" android:layout_height="14dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf7"  android:layout_width="3dp" android:layout_height="22dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf8"  android:layout_width="3dp" android:layout_height="10dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf9"  android:layout_width="3dp" android:layout_height="24dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf10" android:layout_width="3dp" android:layout_height="16dp" android:layout_marginEnd="3dp" android:background="#39FF14" />
+        <View android:id="@+id/wf11" android:layout_width="3dp" android:layout_height="20dp" android:background="#39FF14" />
+    </LinearLayout>
+
+    <!-- ── PANEL DE INSTRUCCIÓN FLOTANTE (INFERIOR) ───────────── -->
+    <LinearLayout
+        android:id="@+id/scanPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#F704080F"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="72dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Progreso del paso -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvStepNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PASO 03/05"
+                android:textColor="#00D4FF"
+                android:textSize="11sp"
+                android:letterSpacing="0.06"
+                android:fontFamily="monospace"
+                android:layout_marginEnd="10dp" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:background="#0C1420">
+                <View
+                    android:id="@+id/stepProgress"
+                    android:layout_width="60%"
+                    android:layout_height="match_parent"
+                    android:background="#00D4FF" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvStepPct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60%"
+                android:textColor="#5A7A9A"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Instrucción principal (texto actualiza en cada paso) -->
+        <TextView
+            android:id="@+id/tvInstruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Retire el tornillo superior izquierdo usando llave 13mm"
+            android:textColor="#E2EAF4"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.3"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <Button
+                android:id="@+id/btnPrev"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="ANT"
+                android:textColor="#5A7A9A"
+                android:textSize="12sp"
+                android:letterSpacing="0.05"
+                android:fontFamily="monospace"
+                app:strokeColor="#2A4A6A"
+                app:strokeWidth="1dp"
+                android:backgroundTint="#00000000" />
+
+            <Button
+                android:id="@+id/btnNext"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                android:text="SIG"
+                android:textColor="#00D4FF"
+                android:textSize="12sp"
+                android:letterSpacing="0.05"
+                android:fontFamily="monospace"
+                app:strokeColor="#00D4FF"
+                app:strokeWidth="1dp"
+                android:backgroundTint="#1A00D4FF" />
+
+            <Button
+                android:id="@+id/btnPause"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="6dp"
+                android:text=""
+                android:drawableStart="@drawable/ic_pause"
+                android:drawablePadding="0dp"
+                app:strokeColor="#2A4A6A"
+                app:strokeWidth="1dp"
+                android:backgroundTint="#00000000" />
+        </LinearLayout>
+
+        <!-- Chips de comandos de voz -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Di \"SIGUIENTE\""
+            android:textColor="#5A7A9A"
+            android:textSize="9sp"
+            android:letterSpacing="0.06"
+            android:fontFamily="monospace"
+            android:background="@drawable/bg_voice_chip"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Di \"REPETIR\""
+            android:textColor="#5A7A9A"
+            android:textSize="9sp"
+            android:letterSpacing="0.06"
+            android:fontFamily="monospace"
+            android:background="@drawable/bg_voice_chip"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Di \"PAUSA\""
+            android:textColor="#5A7A9A"
+            android:textSize="9sp"
+            android:letterSpacing="0.06"
+            android:fontFamily="monospace"
+            android:background="@drawable/bg_voice_chip"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

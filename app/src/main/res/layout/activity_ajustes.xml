@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#4B5563">
+
+    <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/bg_grid_hud" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- Header -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ajustes" android:textColor="#E2EAF4" android:textSize="24sp" android:textStyle="bold" android:layout_marginBottom="2dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PARÁMETROS DE OPERACIÓN" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.06" android:fontFamily="monospace" android:layout_marginBottom="20dp" />
+
+            <!-- ── BLOQUE DE USUARIO ──────────────────────────── -->
+
+            <!-- ── SECCIÓN: VOZ E IA ──────────────────────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_user_block"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_user_avatar">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="monospace"
+                        android:text="JP"
+                        android:textColor="#E2EAF4"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Juan Pérez"
+                        android:textColor="#E2EAF4"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:letterSpacing="0.04"
+                        android:text="● EN LÍNEA — TURNO MAÑANA"
+                        android:textColor="#39FF14"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#4B5563"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="20dp">
+
+                <!-- Row: Comandos de voz -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp" android:background="@drawable/bottom_divider_dark">
+                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_setting_icon" android:gravity="center" android:layout_marginEnd="12dp">
+                        <ImageView android:layout_width="17dp" android:layout_height="17dp" android:src="@drawable/ic_microphone" app:tint="#00D4FF" android:contentDescription="Micrófono" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Comandos de voz" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MANOS LIBRES ACTIVO" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchVoice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        app:thumbTint="#2563EB"
+                        app:trackTint="@drawable/switch_track_selector" />
+                </LinearLayout>
+
+                <!-- Row: Asistente IA -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp" android:background="@drawable/bottom_divider_dark">
+                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_setting_icon" android:gravity="center" android:layout_marginEnd="12dp">
+                        <ImageView android:layout_width="17dp" android:layout_height="17dp" android:src="@drawable/ic_ai" app:tint="#00D4FF" android:contentDescription="IA" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Asistente IA" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GUÍA CONTEXTUAL" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchAI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        app:thumbTint="#2563EB"
+                        app:trackTint="@drawable/switch_track_selector" />
+                </LinearLayout>
+
+                <!-- Row: Audio feedback -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_setting_icon_muted" android:gravity="center" android:layout_marginEnd="12dp">
+                        <ImageView android:layout_width="17dp" android:layout_height="17dp" android:src="@drawable/ic_volume" app:tint="#5A7A9A" android:contentDescription="Audio" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Audio feedback" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONFIRMACIÓN SONORA" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchAudio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        app:thumbTint="#2563EB"
+                        app:trackTint="@drawable/switch_track_selector" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── SECCIÓN: REALIDAD AUMENTADA ───────────────── -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#4B5563"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginBottom="20dp">
+
+                <!-- Row: Etiquetas AR -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp" android:background="@drawable/bottom_divider_dark">
+                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_setting_icon" android:gravity="center" android:layout_marginEnd="12dp">
+                        <ImageView android:layout_width="17dp" android:layout_height="17dp" android:src="@drawable/ic_scan" app:tint="#00D4FF" android:contentDescription="Scan" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Etiquetas AR" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="OVERLAY COMPONENTES" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchArLabels"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        app:thumbTint="#2563EB"
+                        app:trackTint="@drawable/switch_track_selector" />
+                </LinearLayout>
+
+                <!-- Row: Modelos 3D en AR -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_setting_icon_muted" android:gravity="center" android:layout_marginEnd="12dp">
+                        <ImageView android:layout_width="17dp" android:layout_height="17dp" android:src="@drawable/ic_3d_box" app:tint="#5A7A9A" android:contentDescription="3D" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Modelos 3D en AR" android:textColor="#E2EAF4" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPERPOSICIÓN VISUAL" android:textColor="#04080F" android:textSize="10sp" android:letterSpacing="0.03" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchAr3d"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        app:thumbTint="#5A7A9A"
+                        app:trackTint="@drawable/switch_track_selector" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- CTA expandir -->
+            <Button
+                android:id="@+id/btnExpandApp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="EXPANDIR APP"
+                android:textColor="#00D4FF"
+                android:textSize="12sp"
+                android:letterSpacing="0.08"
+                android:fontFamily="monospace"
+                android:drawableStart="@drawable/ic_sparkles"
+                android:drawablePadding="8dp"
+                app:strokeColor="#00D4FF"
+                android:backgroundTint="#1A00D4FF" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="#4B5563"
+        app:itemIconTint="@drawable/nav_item_color"
+        app:itemTextColor="@drawable/nav_item_color"
+        app:menu="@menu/bottom_nav_menu"
+        app:selectedItemId="@id/nav_settings"
+        app:labelVisibilityMode="labeled" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
