@@ -5,7 +5,7 @@
          ═══════════════════════════════════════════════════════ -->
 
     <!-- Fondos -->
-    <color name="bg_deep">#04080F</color>       <!-- Fondo principal (más oscuro) -->
+    <color name="bg_deep">#4B5563</color>        <!-- Fondo principal de todas las pantallas -->
     <color name="bg_dark">#080E1A</color>        <!-- Status bar, bottom nav -->
     <color name="bg_card">#0C1420</color>        <!-- Tarjetas y paneles -->
     <color name="bg_surface">#111827</color>     <!-- Superficies elevadas -->
