@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ═══════════════════════════════════════════════════════
+         ARVoice Maintenance — Paleta HUD Industrial
+         ═══════════════════════════════════════════════════════ -->
+
+    <!-- Fondos -->
+    <color name="bg_deep">#04080F</color>       <!-- Fondo principal (más oscuro) -->
+    <color name="bg_dark">#080E1A</color>        <!-- Status bar, bottom nav -->
+    <color name="bg_card">#0C1420</color>        <!-- Tarjetas y paneles -->
+    <color name="bg_surface">#111827</color>     <!-- Superficies elevadas -->
+    <color name="bg_elevated">#1A2433</color>    <!-- Elementos flotantes -->
+
+    <!-- Acentos principales -->
+    <color name="accent_cyan">#00D4FF</color>    <!-- Primario — HUD activo -->
+    <color name="accent_lime">#39FF14</color>    <!-- Éxito / En línea -->
+    <color name="accent_amber">#FFB700</color>   <!-- Advertencia / Pendiente -->
+    <color name="accent_red">#E12525</color>     <!-- Error / Crítico -->
+    <color name="accent_blue">#2563EB</color>    <!-- Interactivo (switches) -->
+
+    <!-- Acentos con opacidad (para fondos de botones/badges) -->
+    <color name="cyan_10">#1A00D4FF</color>      <!-- Cyan 10% -->
+    <color name="cyan_30">#4D00D4FF</color>      <!-- Cyan 30% -->
+    <color name="lime_10">#1A39FF14</color>      <!-- Lime 10% -->
+    <color name="lime_30">#4D39FF14</color>      <!-- Lime 30% -->
+    <color name="amber_10">#1AFFB700</color>     <!-- Amber 10% -->
+    <color name="amber_30">#4DFFB700</color>     <!-- Amber 30% -->
+
+    <!-- Texto -->
+    <color name="text_primary">#E2EAF4</color>   <!-- Texto principal (claro) -->
+    <color name="text_muted">#5A7A9A</color>     <!-- Texto secundario (gris-azul) -->
+    <color name="text_deep_muted">#2A4A6A</color><!-- Texto muy atenuado -->
+
+    <!-- Bordes y separadores -->
+    <color name="border_dark">#0C1420</color>    <!-- Separadores internos -->
+    <color name="border_medium">#2A4A6A</color>  <!-- Bordes de tarjetas -->
+    <color name="border_cyan">#4D00D4FF</color>  <!-- Borde con acento cyan -->
+    <color name="border_lime">#4D39FF14</color>  <!-- Borde con acento lime -->
+    <color name="border_amber">#4DFFB700</color> <!-- Borde con acento amber -->
+
+    <!-- Sistema -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
