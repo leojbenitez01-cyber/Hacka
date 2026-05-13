@@ -1,19 +1,23 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.tts.InstructionSpeaker
 import com.example.myapplication.voice.VoiceApiService
 import com.example.myapplication.voice.VoiceApiServiceStub
 import com.example.myapplication.voice.VoiceCommand
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.github.sceneview.SceneView
+import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ModelNode
@@ -21,7 +25,7 @@ import kotlinx.coroutines.launch
 
 class TecladoActivity : AppCompatActivity() {
 
-    private lateinit var sceneView: SceneView
+    private lateinit var sceneView: ARSceneView
     private lateinit var tvInstruction: TextView
     private lateinit var tvStepNum: TextView
     private lateinit var tvStepPct: TextView
@@ -50,6 +54,16 @@ class TecladoActivity : AppCompatActivity() {
             else "teclado/Cube.001_Cube.%03d.glb".format(step)
     }
 
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) loadCurrentModel()
+        else {
+            Toast.makeText(this, "Se requiere permiso de cámara", Toast.LENGTH_LONG).show()
+            finish()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teclado)
@@ -68,7 +82,18 @@ class TecladoActivity : AppCompatActivity() {
         setupBottomNav()
         setupVoiceCommands()
         updateStepUI()
-        loadCurrentModel()
+        checkCameraPermission()
+    }
+
+    // ── Permisos ───────────────────────────────────────────────────────────────
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED) {
+            loadCurrentModel()
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     // ── Modelo 3D ─────────────────────────────────────────────────────────────
@@ -110,7 +135,7 @@ class TecladoActivity : AppCompatActivity() {
     }
 
     private fun updateStepUI() {
-        val total = TOTAL_PIECES + 1          // paso 0 + 383 piezas
+        val total = TOTAL_PIECES + 1
         val pct   = (currentStep * 100) / total
 
         if (currentStep == 0) {
