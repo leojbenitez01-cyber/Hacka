@@ -263,7 +263,7 @@
                 android:background="#0C1420">
                 <View
                     android:id="@+id/stepProgress"
-                    android:layout_width="12%"
+                    android:layout_width="4dp"
                     android:layout_height="match_parent"
                     android:background="#00D4FF" />
             </FrameLayout>
