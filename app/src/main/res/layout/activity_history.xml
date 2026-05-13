@@ -34,7 +34,6 @@
         app:itemIconTint="@drawable/nav_item_color"
         app:itemTextColor="@drawable/nav_item_color"
         app:menu="@menu/bottom_nav_menu"
-        app:selectedItemId="@id/nav_history"
         app:labelVisibilityMode="labeled" />
 
     <LinearLayout
