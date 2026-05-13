@@ -12,7 +12,7 @@
     android:background="#4B5563">
 
     <!-- ── CÁMARA AR (ArSceneView — ARCore + SceneView) ─────── -->
-    <io.github.sceneview.ar.ArSceneView
+    <io.github.sceneview.ar.ARSceneView
         android:id="@+id/arSceneView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -370,7 +370,7 @@
                 android:background="#0C1420">
                 <View
                     android:id="@+id/stepProgress"
-                    android:layout_width="60%"
+                    android:layout_width="4dp"
                     android:layout_height="match_parent"
                     android:background="#00D4FF" />
             </FrameLayout>
@@ -445,8 +445,9 @@
                 android:layout_height="44dp"
                 android:layout_marginStart="6dp"
                 android:text=""
-                android:drawableStart="@drawable/ic_pause"
-                android:drawablePadding="0dp"
+                app:icon="@drawable/ic_pause"
+                app:iconPadding="0dp"
+                app:iconGravity="textStart"
                 app:strokeColor="#2A4A6A"
                 app:strokeWidth="1dp"
                 android:backgroundTint="#00000000" />
@@ -461,7 +462,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Di \"SIGUIENTE\""
+                android:text="Di 'SIGUIENTE'"
             android:textColor="#5A7A9A"
             android:textSize="9sp"
             android:letterSpacing="0.06"
@@ -476,7 +477,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Di \"REPETIR\""
+                android:text="Di 'REPETIR'"
             android:textColor="#5A7A9A"
             android:textSize="9sp"
             android:letterSpacing="0.06"
@@ -491,7 +492,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Di \"PAUSA\""
+                android:text="Di 'PAUSA'"
             android:textColor="#5A7A9A"
             android:textSize="9sp"
             android:letterSpacing="0.06"
