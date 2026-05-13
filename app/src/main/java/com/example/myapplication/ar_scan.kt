@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -16,6 +17,7 @@ import com.example.myapplication.voice.VoiceApiService
 import com.example.myapplication.voice.VoiceApiServiceStub
 import com.example.myapplication.voice.VoiceCommand
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.ar.core.Plane
 import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.node.ModelNode
@@ -93,10 +95,14 @@ class ar_scan : AppCompatActivity() {
     }
 
     private fun initAR() {
-        arSceneView.onTapPlane = { hitResult, _, _ ->
-            if (!modelPlaced) placeModel(hitResult)
+        arSceneView.setOnTouchListener { _, event ->
+            if (!modelPlaced && event.action == MotionEvent.ACTION_UP) {
+                arSceneView.frame?.hitTest(event)
+                    ?.firstOrNull { it.trackable is Plane }
+                    ?.let { placeModel(it) }
+            }
+            true
         }
-
         setupVoiceCommands()
     }
 
