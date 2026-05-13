@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -55,7 +54,7 @@ class ar_scan : AppCompatActivity() {
 
     companion object {
         /** Ruta del modelo dentro de assets/. Renombra tu archivo GLB a este nombre. */
-        const val MODEL_FILE = "models/machine.glb"
+        const val MODEL_FILE = "models/brazo/brazo.glb"
     }
 
     // ── Permiso de cámara ──────────────────────────────────────────────────────

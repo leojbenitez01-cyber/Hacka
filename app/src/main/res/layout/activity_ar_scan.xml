@@ -21,15 +21,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Grid de fondo HUD (se muestra solo si cámara no disponible) -->
+    <!-- Grid de fondo HUD (overlay sobre el ArSceneView) -->
     <View
         android:id="@+id/hudGrid"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_grid_hud"
         android:alpha="0.4"
-        app:layout_constraintTop_toTopOf="@id/cameraPreview"
-        app:layout_constraintBottom_toBottomOf="@id/cameraPreview"
+        app:layout_constraintTop_toTopOf="@id/arSceneView"
+        app:layout_constraintBottom_toBottomOf="@id/arSceneView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -503,5 +503,18 @@
             android:paddingBottom="3dp" />
         </LinearLayout>
     </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="#CC080E1A"
+        app:itemIconTint="@drawable/nav_item_color"
+        app:itemTextColor="@drawable/nav_item_color"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
