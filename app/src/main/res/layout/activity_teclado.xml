@@ -119,7 +119,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <io.github.sceneview.SceneView
+        <io.github.sceneview.ar.ARSceneView
             android:id="@+id/sceneView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -1,19 +1,22 @@
 package com.example.myapplication
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.tts.InstructionSpeaker
-import com.example.myapplication.voice.VoiceApiService
-import com.example.myapplication.voice.VoiceApiServiceStub
 import com.example.myapplication.voice.VoiceCommand
+import com.example.myapplication.voice.VoiceRecognitionService
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.github.sceneview.SceneView
+import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
 import io.github.sceneview.node.ModelNode
@@ -21,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class TecladoActivity : AppCompatActivity() {
 
-    private lateinit var sceneView: SceneView
+    private lateinit var sceneView: ARSceneView
     private lateinit var tvInstruction: TextView
     private lateinit var tvStepNum: TextView
     private lateinit var tvStepPct: TextView
@@ -32,66 +35,32 @@ class TecladoActivity : AppCompatActivity() {
     private lateinit var loadingOverlay: View
 
     private val speaker by lazy { InstructionSpeaker(this) }
-    private val voiceService: VoiceApiService = VoiceApiServiceStub()
+    private val voiceService by lazy { VoiceRecognitionService(this) }
 
     private var modelNode: ModelNode? = null
     private var zoomScale = 1.0f
     private var currentStep = 0
 
-    data class KeyboardStep(
-        val zone: String,
-        val instruction: String,
-        val fileIndex: Int
-    )
-
-    private val steps = listOf(
-        KeyboardStep(
-            zone = "INSPECCIÓN GENERAL",
-            instruction = "Apague el panel de control y desconecte la alimentación antes de proceder con la inspección del teclado.",
-            fileIndex = 1
-        ),
-        KeyboardStep(
-            zone = "TECLAS DE FUNCIÓN F1–F12",
-            instruction = "Inspeccione las teclas de función F1 a F12. Verifique que no presenten desgaste excesivo, grietas o teclas atascadas.",
-            fileIndex = 2
-        ),
-        KeyboardStep(
-            zone = "FILA NUMÉRICA  1–0",
-            instruction = "Revise la fila numérica superior (1, 2, 3… 0, -, =). Limpie residuos con aire comprimido a 30 PSI máximo.",
-            fileIndex = 62
-        ),
-        KeyboardStep(
-            zone = "FILA QWERTY",
-            instruction = "Examine la fila principal QWERTY. Compruebe que cada tecla regresa a su posición correcta al soltarla.",
-            fileIndex = 122
-        ),
-        KeyboardStep(
-            zone = "FILA ASDF",
-            instruction = "Revise la fila de inicio ASDF. Verifique el estado del mecanismo de cada tecla y limpie con paño antiestático.",
-            fileIndex = 192
-        ),
-        KeyboardStep(
-            zone = "FILA ZXCV — BARRA ESPACIADORA",
-            instruction = "Inspeccione la fila inferior ZXCV y la barra espaciadora. La barra es la tecla con mayor desgaste — verifique sus estabilizadores.",
-            fileIndex = 252
-        ),
-        KeyboardStep(
-            zone = "TECLAS MODIFICADORAS",
-            instruction = "Compruebe CTRL, ALT, SHIFT, WIN y teclas especiales. Aplique lubricante de silicón en los ejes si presentan resistencia.",
-            fileIndex = 307
-        ),
-        KeyboardStep(
-            zone = "TECLADO NUMÉRICO LATERAL",
-            instruction = "Revise el teclado numérico (NumPad). Pruebe NumLock, /, *, -, + y la tecla Enter lateral. Reconecte el cable de datos al finalizar.",
-            fileIndex = 362
-        )
-    )
-
     companion object {
-        private const val ZOOM_STEP = 0.15f
-        private const val ZOOM_MIN  = 0.2f
-        private const val ZOOM_MAX  = 3.0f
+        private const val TOTAL_PIECES = 383
+        private const val ZOOM_STEP  = 0.15f
+        private const val ZOOM_MIN   = 0.2f
+        private const val ZOOM_MAX   = 3.0f
         private const val MODEL_SCALE = 0.8f
+
+        private fun fileName(step: Int): String =
+            if (step == 0) "teclado/tecladocompleto.glb"
+            else "teclado/Cube.001_Cube.%03d.glb".format(step)
+    }
+
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) loadCurrentModel()
+        else {
+            Toast.makeText(this, "Se requiere permiso de cámara", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,45 +77,44 @@ class TecladoActivity : AppCompatActivity() {
         btnPrev        = findViewById(R.id.btnPrev)
         loadingOverlay = findViewById(R.id.loadingOverlay)
 
-        lifecycle.addObserver(sceneView)
-
         bindButtons()
         setupBottomNav()
         setupVoiceCommands()
         updateStepUI()
-        loadCurrentModel()
+        checkCameraPermission()
+    }
+
+    // ── Permisos ───────────────────────────────────────────────────────────────
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED) {
+            loadCurrentModel()
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     // ── Modelo 3D ─────────────────────────────────────────────────────────────
 
     private fun loadCurrentModel() {
-        val step = steps[currentStep]
-        val fileName = "teclado/Cube.001_Cube.%03d.glb".format(step.fileIndex)
-
+        val file = fileName(currentStep)
         loadingOverlay.visibility = View.VISIBLE
 
         lifecycleScope.launch {
-            // Remover nodo anterior
             modelNode?.let { sceneView.removeChildNode(it) }
             modelNode = null
 
-            val instance = sceneView.modelLoader.createModelInstance(fileName)
-
+            val instance = sceneView.modelLoader.createModelInstance(file)
             loadingOverlay.visibility = View.GONE
 
             if (instance == null) {
-                Toast.makeText(
-                    this@TecladoActivity,
-                    "No se encontró el modelo: $fileName",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@TecladoActivity, "No se encontró: $file", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
-            val node = ModelNode(
-                modelInstance = instance,
-                scaleToUnits  = MODEL_SCALE
-            ).apply { isEditable = true }
+            val node = ModelNode(modelInstance = instance, scaleToUnits = MODEL_SCALE)
+                .apply { isEditable = true }
 
             sceneView.addChildNode(node)
             modelNode = node
@@ -157,23 +125,28 @@ class TecladoActivity : AppCompatActivity() {
     // ── Pasos ─────────────────────────────────────────────────────────────────
 
     private fun goToStep(index: Int) {
-        if (index !in steps.indices) return
+        if (index !in 0..TOTAL_PIECES) return
         currentStep = index
         updateStepUI()
         loadCurrentModel()
-        speaker.speak(steps[currentStep].instruction)
+        val label = if (currentStep == 0) "Teclado completo" else "Pieza $currentStep de $TOTAL_PIECES"
+        speaker.speak(label)
     }
 
     private fun updateStepUI() {
-        val total = steps.size
-        val num   = currentStep + 1
-        val pct   = (num * 100) / total
-        val step  = steps[currentStep]
+        val total = TOTAL_PIECES + 1
+        val pct   = (currentStep * 100) / total
 
-        tvStepNum.text     = "PASO ${num.toString().padStart(2, '0')}/$total"
-        tvStepPct.text     = "$pct%"
-        tvInstruction.text = step.instruction
-        tvZone.text        = "ZONA: ${step.zone}"
+        if (currentStep == 0) {
+            tvStepNum.text     = "VISTA COMPLETA"
+            tvZone.text        = "ZONA: TECLADO COMPLETO"
+            tvInstruction.text = "Vista general del teclado de control"
+        } else {
+            tvStepNum.text     = "PIEZA ${currentStep.toString().padStart(3, '0')}/$TOTAL_PIECES"
+            tvZone.text        = "ZONA: TECLADO DE CONTROL"
+            tvInstruction.text = "Inspeccione la pieza %03d del teclado".format(currentStep)
+        }
+        tvStepPct.text = "$pct%"
 
         stepProgress.post {
             val parent = stepProgress.parent as? View ?: return@post
@@ -183,7 +156,7 @@ class TecladoActivity : AppCompatActivity() {
         }
 
         btnPrev.isEnabled = currentStep > 0
-        btnNext.isEnabled = currentStep < steps.size - 1
+        btnNext.isEnabled = currentStep < TOTAL_PIECES
     }
 
     // ── Controles ─────────────────────────────────────────────────────────────
@@ -215,7 +188,7 @@ class TecladoActivity : AppCompatActivity() {
                 when (cmd) {
                     is VoiceCommand.Next     -> goToStep(currentStep + 1)
                     is VoiceCommand.Previous -> goToStep(currentStep - 1)
-                    is VoiceCommand.Repeat   -> speaker.speak(steps[currentStep].instruction)
+                    is VoiceCommand.Repeat   -> speaker.speak(if (currentStep == 0) "Teclado completo" else "Pieza $currentStep de $TOTAL_PIECES")
                     is VoiceCommand.Zoom     -> applyZoom(+ZOOM_STEP)
                     is VoiceCommand.Rotate   -> rotateModel()
                     is VoiceCommand.Pause,
