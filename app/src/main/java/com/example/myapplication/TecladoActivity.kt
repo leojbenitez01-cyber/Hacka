@@ -45,8 +45,9 @@ class TecladoActivity : AppCompatActivity() {
         private const val ZOOM_MAX   = 3.0f
         private const val MODEL_SCALE = 0.8f
 
-        private fun fileName(index: Int) =
-            "teclado/Cube.001_Cube.%03d.glb".format(index + 1)
+        private fun fileName(step: Int): String =
+            if (step == 0) "teclado/tecladocompleto.glb"
+            else "teclado/Cube.001_Cube.%03d.glb".format(step)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,21 +101,28 @@ class TecladoActivity : AppCompatActivity() {
     // ── Pasos ─────────────────────────────────────────────────────────────────
 
     private fun goToStep(index: Int) {
-        if (index !in 0 until TOTAL_PIECES) return
+        if (index !in 0..TOTAL_PIECES) return
         currentStep = index
         updateStepUI()
         loadCurrentModel()
-        speaker.speak("Pieza ${currentStep + 1} de $TOTAL_PIECES")
+        val label = if (currentStep == 0) "Teclado completo" else "Pieza $currentStep de $TOTAL_PIECES"
+        speaker.speak(label)
     }
 
     private fun updateStepUI() {
-        val num = currentStep + 1
-        val pct = (num * 100) / TOTAL_PIECES
+        val total = TOTAL_PIECES + 1          // paso 0 + 383 piezas
+        val pct   = (currentStep * 100) / total
 
-        tvStepNum.text     = "PIEZA ${num.toString().padStart(3, '0')}/$TOTAL_PIECES"
-        tvStepPct.text     = "$pct%"
-        tvZone.text        = "ZONA: TECLADO DE CONTROL"
-        tvInstruction.text = "Inspeccione la pieza %03d del teclado".format(num)
+        if (currentStep == 0) {
+            tvStepNum.text     = "VISTA COMPLETA"
+            tvZone.text        = "ZONA: TECLADO COMPLETO"
+            tvInstruction.text = "Vista general del teclado de control"
+        } else {
+            tvStepNum.text     = "PIEZA ${currentStep.toString().padStart(3, '0')}/$TOTAL_PIECES"
+            tvZone.text        = "ZONA: TECLADO DE CONTROL"
+            tvInstruction.text = "Inspeccione la pieza %03d del teclado".format(currentStep)
+        }
+        tvStepPct.text = "$pct%"
 
         stepProgress.post {
             val parent = stepProgress.parent as? View ?: return@post
@@ -124,7 +132,7 @@ class TecladoActivity : AppCompatActivity() {
         }
 
         btnPrev.isEnabled = currentStep > 0
-        btnNext.isEnabled = currentStep < TOTAL_PIECES - 1
+        btnNext.isEnabled = currentStep < TOTAL_PIECES
     }
 
     // ── Controles ─────────────────────────────────────────────────────────────
@@ -156,7 +164,7 @@ class TecladoActivity : AppCompatActivity() {
                 when (cmd) {
                     is VoiceCommand.Next     -> goToStep(currentStep + 1)
                     is VoiceCommand.Previous -> goToStep(currentStep - 1)
-                    is VoiceCommand.Repeat   -> speaker.speak("Pieza ${currentStep + 1} de $TOTAL_PIECES")
+                    is VoiceCommand.Repeat   -> speaker.speak(if (currentStep == 0) "Teclado completo" else "Pieza $currentStep de $TOTAL_PIECES")
                     is VoiceCommand.Zoom     -> applyZoom(+ZOOM_STEP)
                     is VoiceCommand.Rotate   -> rotateModel()
                     is VoiceCommand.Pause,
