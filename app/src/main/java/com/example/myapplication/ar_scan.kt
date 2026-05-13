@@ -75,6 +75,8 @@ class ar_scan : AppCompatActivity() {
         btnNext       = findViewById(R.id.btnNext)
         btnPrev       = findViewById(R.id.btnPrev)
 
+        lifecycle.addObserver(arSceneView)
+
         btnNext.setOnClickListener { goToStep(currentStep + 1) }
         btnPrev.setOnClickListener { goToStep(currentStep - 1) }
         findViewById<View>(R.id.btnClose).setOnClickListener { finish() }
@@ -93,8 +95,6 @@ class ar_scan : AppCompatActivity() {
     }
 
     private fun initAR() {
-        lifecycle.addObserver(arSceneView)
-
         arSceneView.onTapPlane = { hitResult, _, _ ->
             if (!modelPlaced) placeModel(hitResult)
         }
