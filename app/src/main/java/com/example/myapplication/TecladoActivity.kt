@@ -13,9 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.tts.InstructionSpeaker
-import com.example.myapplication.voice.VoiceApiService
-import com.example.myapplication.voice.VoiceApiServiceStub
 import com.example.myapplication.voice.VoiceCommand
+import com.example.myapplication.voice.VoiceRecognitionService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.math.Rotation
@@ -36,7 +35,7 @@ class TecladoActivity : AppCompatActivity() {
     private lateinit var loadingOverlay: View
 
     private val speaker by lazy { InstructionSpeaker(this) }
-    private val voiceService: VoiceApiService = VoiceApiServiceStub()
+    private val voiceService by lazy { VoiceRecognitionService(this) }
 
     private var modelNode: ModelNode? = null
     private var zoomScale = 1.0f
