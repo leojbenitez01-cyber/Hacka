@@ -74,20 +74,10 @@
                 android:background="@drawable/bg_model_stage"
                 android:layout_marginBottom="12dp">
 
-                <!--
-                    Aquí va el Fragment de SceneView para el modelo GLTF/GLB.
-                    En producción reemplazar por:
-                    <fragment android:name="io.github.sceneview.SceneView" ... />
-                    Por ahora se usa una ImageView placeholder del modelo.
-                -->
-                <ImageView
-                    android:id="@+id/modelPlaceholder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_3d_model_compressor"
-                    app:tint="#00D4FF"
-                    android:alpha="0.75"
+                <io.github.sceneview.SceneView
+                    android:id="@+id/sceneView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:contentDescription="Modelo 3D Compresor A-12" />
 
                 <!-- Controles del modelo (columna derecha) -->

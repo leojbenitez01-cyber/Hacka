@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- Permisos -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Compatibilidad ARCore -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
@@ -21,6 +22,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
         <activity
             android:name=".Ajustes"
             android:exported="false" />

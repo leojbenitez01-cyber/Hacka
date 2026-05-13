@@ -1,20 +1,239 @@
 package com.example.myapplication
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.MotionEvent
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.tts.InstructionSpeaker
+import com.example.myapplication.voice.VoiceApiService
+import com.example.myapplication.voice.VoiceApiServiceStub
+import com.example.myapplication.voice.VoiceCommand
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.github.sceneview.ar.ArSceneView
+import io.github.sceneview.ar.node.AnchorNode
+import io.github.sceneview.node.ModelNode
+import kotlinx.coroutines.launch
 
 class ar_scan : AppCompatActivity() {
+
+    // ── Vistas ────────────────────────────────────────────────────────────────
+    private lateinit var arSceneView: ArSceneView
+    private lateinit var tvInstruction: TextView
+    private lateinit var tvStepNum: TextView
+    private lateinit var tvStepPct: TextView
+    private lateinit var stepProgress: View
+    private lateinit var btnNext: Button
+    private lateinit var btnPrev: Button
+
+    // ── Servicios ─────────────────────────────────────────────────────────────
+    private val speaker by lazy { InstructionSpeaker(this) }
+
+    // ── TODO: reemplazar stub cuando la API de voz esté lista ─────────────────
+    private val voiceService: VoiceApiService = VoiceApiServiceStub()
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ── Estado ────────────────────────────────────────────────────────────────
+    private var modelPlaced = false
+    private var currentStep = 0
+
+    /** Pasos de mantenimiento del equipo. Reemplazar con datos reales de la API. */
+    private val steps = listOf(
+        "Apague la máquina y desconecte la alimentación eléctrica",
+        "Retire el panel frontal con llave Allen número 5",
+        "Inspeccione el filtro de aire — reemplace si está obstruido más del 50%",
+        "Verifique el estado de los rodamientos — escuche ruidos anómalos",
+        "Revise el nivel de aceite en el visor lateral y rellene si es necesario"
+    )
+
+    companion object {
+        /** Ruta del modelo dentro de assets/. Renombra tu archivo GLB a este nombre. */
+        const val MODEL_FILE = "models/machine.glb"
+    }
+
+    // ── Permiso de cámara ──────────────────────────────────────────────────────
+    private val cameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) initAR()
+        else {
+            Toast.makeText(this, "Se requiere permiso de cámara para AR", Toast.LENGTH_LONG).show()
+            finish()
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_ar_scan)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        bindViews()
+        checkCameraPermission()
+    }
+
+    private fun bindViews() {
+        arSceneView  = findViewById(R.id.arSceneView)
+        tvInstruction = findViewById(R.id.tvInstruction)
+        tvStepNum    = findViewById(R.id.tvStepNum)
+        tvStepPct    = findViewById(R.id.tvStepPct)
+        stepProgress = findViewById(R.id.stepProgress)
+        btnNext      = findViewById(R.id.btnNext)
+        btnPrev      = findViewById(R.id.btnPrev)
+
+        btnNext.setOnClickListener { goToStep(currentStep + 1) }
+        btnPrev.setOnClickListener { goToStep(currentStep - 1) }
+        findViewById<View>(R.id.btnClose).setOnClickListener { finish() }
+
+        setupBottomNav()
+        updateStepUI()
+    }
+
+    // ── Permiso ────────────────────────────────────────────────────────────────
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED) {
+            initAR()
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    // ── AR Setup ───────────────────────────────────────────────────────────────
+    private fun initAR() {
+        lifecycle.addObserver(arSceneView)
+
+        // Detección de planos habilitada por defecto en ArSceneView
+        // Cuando el usuario toca un plano detectado, colocamos el modelo
+        arSceneView.onTapPlane = { hitResult, _, _ ->
+            if (!modelPlaced) placeModel(hitResult)
+        }
+
+        setupVoiceCommands()
+    }
+
+    private fun placeModel(hitResult: com.google.ar.core.HitResult) {
+        lifecycleScope.launch {
+            val instance = arSceneView.modelLoader
+                .createModelInstance(MODEL_FILE)
+                ?: run {
+                    Toast.makeText(
+                        this@ar_scan,
+                        "No se encontró $MODEL_FILE en assets/",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+
+            val modelNode = ModelNode(
+                modelInstance = instance,
+                scaleToUnits  = 0.8f   // ajusta el tamaño según tu modelo
+            )
+
+            val anchorNode = AnchorNode(
+                engine = arSceneView.engine,
+                anchor = hitResult.createAnchor()
+            ).apply {
+                isEditable = true       // permite mover/girar el modelo con toque
+                addChildNode(modelNode)
+            }
+
+            arSceneView.addChildNode(anchorNode)
+            modelPlaced = true
+
+            // Leer primer instrucción en voz alta
+            speaker.speak(steps[currentStep])
+        }
+    }
+
+    // ── Integración con API de voz ─────────────────────────────────────────────
+    // TODO: Cuando la API esté lista, reemplazar VoiceApiServiceStub por la
+    //       implementación real y conectar el flujo de audio aquí.
+    private fun setupVoiceCommands() {
+        voiceService.setCommandListener { cmd ->
+            runOnUiThread {
+                when (cmd) {
+                    is VoiceCommand.Next    -> goToStep(currentStep + 1)
+                    is VoiceCommand.Previous -> goToStep(currentStep - 1)
+                    is VoiceCommand.Repeat  -> speaker.speak(steps[currentStep])
+                    is VoiceCommand.Pause,
+                    is VoiceCommand.Stop    -> speaker.stop()
+                    else                    -> { /* ignorar comandos no relevantes */ }
+                }
+            }
+        }
+        voiceService.startListening()
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    // ── Pasos de mantenimiento ─────────────────────────────────────────────────
+    private fun goToStep(index: Int) {
+        if (index !in steps.indices) return
+        currentStep = index
+        updateStepUI()
+        speaker.speak(steps[currentStep])
+    }
+
+    private fun updateStepUI() {
+        val total = steps.size
+        val num   = currentStep + 1
+        val pct   = (num * 100) / total
+
+        tvStepNum.text     = "PASO ${num.toString().padStart(2, '0')}/$total"
+        tvStepPct.text     = "$pct%"
+        tvInstruction.text = steps[currentStep]
+
+        // Ancho de la barra de progreso proporcional al pct
+        stepProgress.post {
+            val parent = stepProgress.parent as? View ?: return@post
+            val targetW = (parent.width * pct / 100).coerceAtLeast(4)
+            stepProgress.layoutParams = stepProgress.layoutParams.apply { width = targetW }
+            stepProgress.requestLayout()
+        }
+
+        btnPrev.isEnabled = currentStep > 0
+        btnNext.isEnabled = currentStep < steps.size - 1
+    }
+
+    // ── Navegación inferior ────────────────────────────────────────────────────
+    private fun setupBottomNav() {
+        val nav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        nav.selectedItemId = R.id.nav_scan
+        nav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_dashboard -> { finish(); true }
+                R.id.nav_history   -> {
+                    startActivity(android.content.Intent(this, History::class.java))
+                    true
+                }
+                R.id.nav_settings  -> {
+                    startActivity(android.content.Intent(this, Ajustes::class.java))
+                    true
+                }
+                else -> true
+            }
+        }
+    }
+
+    // ── Ciclo de vida ──────────────────────────────────────────────────────────
+    override fun onResume() {
+        super.onResume()
+        voiceService.startListening()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        voiceService.stopListening()
+        speaker.stop()
+    }
+
+    override fun onDestroy() {
+        speaker.release()
+        super.onDestroy()
     }
 }
