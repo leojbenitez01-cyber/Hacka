@@ -18,9 +18,16 @@ import com.example.myapplication.voice.VoiceCommand
 import com.example.myapplication.voice.VoiceRecognitionService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.ar.core.Plane
+import com.google.ar.core.exceptions.NotYetAvailableException
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import io.github.sceneview.ar.ARSceneView
 import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.node.ModelNode
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class ar_scan : AppCompatActivity() {
@@ -37,8 +44,14 @@ class ar_scan : AppCompatActivity() {
     private val speaker by lazy { InstructionSpeaker(this) }
     private val voiceService by lazy { VoiceRecognitionService(this) }
 
+    private val labeler = ImageLabeling.getClient(
+        ImageLabelerOptions.Builder().setConfidenceThreshold(0.65f).build()
+    )
+
     private var modelPlaced = false
     private var currentStep = 0
+    private var keyboardLaunched = false
+    private var scanJob: Job? = null
 
     private val steps = listOf(
         "Apague la máquina y desconecte la alimentación eléctrica",
@@ -50,6 +63,7 @@ class ar_scan : AppCompatActivity() {
 
     companion object {
         const val MODEL_FILE = "models/brazo/brazo.glb"
+        private val KEYBOARD_LABELS = setOf("keyboard", "computer keyboard", "input device", "teclado")
     }
 
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -105,6 +119,48 @@ class ar_scan : AppCompatActivity() {
             true
         }
         setupVoiceCommands()
+        startKeyboardDetection()
+    }
+
+    // ── Detección automática de teclado ───────────────────────────────────────
+
+    private fun startKeyboardDetection() {
+        scanJob = lifecycleScope.launch {
+            while (isActive && !keyboardLaunched) {
+                delay(1500)
+                detectKeyboardInFrame()
+            }
+        }
+    }
+
+    private fun detectKeyboardInFrame() {
+        val frame = arSceneView.frame ?: return
+        val mediaImage = try {
+            frame.acquireCameraImage()
+        } catch (e: NotYetAvailableException) {
+            return
+        } catch (e: Exception) {
+            return
+        }
+
+        val inputImage = InputImage.fromMediaImage(mediaImage, 90)
+        labeler.process(inputImage)
+            .addOnSuccessListener { labels ->
+                mediaImage.close()
+                val isKeyboard = labels.any { label ->
+                    KEYBOARD_LABELS.any { kw -> label.text.contains(kw, ignoreCase = true) }
+                }
+                if (isKeyboard && !keyboardLaunched) {
+                    keyboardLaunched = true
+                    runOnUiThread {
+                        Toast.makeText(this, "Teclado detectado", Toast.LENGTH_SHORT).show()
+                        launchKeyboardGuide()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                mediaImage.close()
+            }
     }
 
     // ── Modelo 3D ─────────────────────────────────────────────────────────────
@@ -207,16 +263,20 @@ class ar_scan : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        keyboardLaunched = false
         voiceService.startListening()
+        startKeyboardDetection()
     }
 
     override fun onPause() {
         super.onPause()
+        scanJob?.cancel()
         voiceService.stopListening()
         speaker.stop()
     }
 
     override fun onDestroy() {
+        labeler.close()
         speaker.release()
         super.onDestroy()
     }
