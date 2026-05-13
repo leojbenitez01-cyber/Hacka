@@ -205,12 +205,24 @@
                 android:textSize="12sp"
                 android:letterSpacing="0.08"
                 android:fontFamily="monospace"
-                android:drawableStart="@drawable/ic_sparkles"
-                android:drawablePadding="8dp"
+                app:icon="@drawable/ic_sparkles"
+                app:iconPadding="8dp"
+                app:iconGravity="textStart"
                 app:strokeColor="#00D4FF"
                 android:backgroundTint="#1A00D4FF" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="#080E1A"
+        app:itemIconTint="@drawable/nav_item_color"
+        app:itemTextColor="@drawable/nav_item_color"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
