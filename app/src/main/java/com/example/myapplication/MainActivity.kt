@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ar_scan::class.java))
         }
         findViewById<View>(R.id.tileManuals).setOnClickListener {
-            startActivity(Intent(this, View_3d::class.java))
+            startActivity(Intent(this, TecladoActivity::class.java))
         }
         findViewById<View>(R.id.tileHistory).setOnClickListener {
             startActivity(Intent(this, History::class.java))

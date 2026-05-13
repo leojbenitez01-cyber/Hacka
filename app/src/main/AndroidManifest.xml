@@ -27,6 +27,9 @@
             android:name="com.google.ar.core"
             android:value="required" />
         <activity
+            android:name=".TecladoActivity"
+            android:exported="false" />
+        <activity
             android:name=".Ajustes"
             android:exported="false" />
         <activity
