@@ -38,60 +38,15 @@ class TecladoActivity : AppCompatActivity() {
     private var zoomScale = 1.0f
     private var currentStep = 0
 
-    data class KeyboardStep(
-        val zone: String,
-        val instruction: String,
-        val fileIndex: Int
-    )
-
-    private val steps = listOf(
-        KeyboardStep(
-            zone = "INSPECCIÓN GENERAL",
-            instruction = "Apague el panel de control y desconecte la alimentación antes de proceder con la inspección del teclado.",
-            fileIndex = 1
-        ),
-        KeyboardStep(
-            zone = "TECLAS DE FUNCIÓN F1–F12",
-            instruction = "Inspeccione las teclas de función F1 a F12. Verifique que no presenten desgaste excesivo, grietas o teclas atascadas.",
-            fileIndex = 2
-        ),
-        KeyboardStep(
-            zone = "FILA NUMÉRICA  1–0",
-            instruction = "Revise la fila numérica superior (1, 2, 3… 0, -, =). Limpie residuos con aire comprimido a 30 PSI máximo.",
-            fileIndex = 62
-        ),
-        KeyboardStep(
-            zone = "FILA QWERTY",
-            instruction = "Examine la fila principal QWERTY. Compruebe que cada tecla regresa a su posición correcta al soltarla.",
-            fileIndex = 122
-        ),
-        KeyboardStep(
-            zone = "FILA ASDF",
-            instruction = "Revise la fila de inicio ASDF. Verifique el estado del mecanismo de cada tecla y limpie con paño antiestático.",
-            fileIndex = 192
-        ),
-        KeyboardStep(
-            zone = "FILA ZXCV — BARRA ESPACIADORA",
-            instruction = "Inspeccione la fila inferior ZXCV y la barra espaciadora. La barra es la tecla con mayor desgaste — verifique sus estabilizadores.",
-            fileIndex = 252
-        ),
-        KeyboardStep(
-            zone = "TECLAS MODIFICADORAS",
-            instruction = "Compruebe CTRL, ALT, SHIFT, WIN y teclas especiales. Aplique lubricante de silicón en los ejes si presentan resistencia.",
-            fileIndex = 307
-        ),
-        KeyboardStep(
-            zone = "TECLADO NUMÉRICO LATERAL",
-            instruction = "Revise el teclado numérico (NumPad). Pruebe NumLock, /, *, -, + y la tecla Enter lateral. Reconecte el cable de datos al finalizar.",
-            fileIndex = 362
-        )
-    )
-
     companion object {
-        private const val ZOOM_STEP = 0.15f
-        private const val ZOOM_MIN  = 0.2f
-        private const val ZOOM_MAX  = 3.0f
+        private const val TOTAL_PIECES = 383
+        private const val ZOOM_STEP  = 0.15f
+        private const val ZOOM_MIN   = 0.2f
+        private const val ZOOM_MAX   = 3.0f
         private const val MODEL_SCALE = 0.8f
+
+        private fun fileName(index: Int) =
+            "teclado/Cube.001_Cube.%03d.glb".format(index + 1)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,33 +73,23 @@ class TecladoActivity : AppCompatActivity() {
     // ── Modelo 3D ─────────────────────────────────────────────────────────────
 
     private fun loadCurrentModel() {
-        val step = steps[currentStep]
-        val fileName = "teclado/Cube.001_Cube.%03d.glb".format(step.fileIndex)
-
+        val file = fileName(currentStep)
         loadingOverlay.visibility = View.VISIBLE
 
         lifecycleScope.launch {
-            // Remover nodo anterior
             modelNode?.let { sceneView.removeChildNode(it) }
             modelNode = null
 
-            val instance = sceneView.modelLoader.createModelInstance(fileName)
-
+            val instance = sceneView.modelLoader.createModelInstance(file)
             loadingOverlay.visibility = View.GONE
 
             if (instance == null) {
-                Toast.makeText(
-                    this@TecladoActivity,
-                    "No se encontró el modelo: $fileName",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@TecladoActivity, "No se encontró: $file", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
-            val node = ModelNode(
-                modelInstance = instance,
-                scaleToUnits  = MODEL_SCALE
-            ).apply { isEditable = true }
+            val node = ModelNode(modelInstance = instance, scaleToUnits = MODEL_SCALE)
+                .apply { isEditable = true }
 
             sceneView.addChildNode(node)
             modelNode = node
@@ -155,23 +100,21 @@ class TecladoActivity : AppCompatActivity() {
     // ── Pasos ─────────────────────────────────────────────────────────────────
 
     private fun goToStep(index: Int) {
-        if (index !in steps.indices) return
+        if (index !in 0 until TOTAL_PIECES) return
         currentStep = index
         updateStepUI()
         loadCurrentModel()
-        speaker.speak(steps[currentStep].instruction)
+        speaker.speak("Pieza ${currentStep + 1} de $TOTAL_PIECES")
     }
 
     private fun updateStepUI() {
-        val total = steps.size
-        val num   = currentStep + 1
-        val pct   = (num * 100) / total
-        val step  = steps[currentStep]
+        val num = currentStep + 1
+        val pct = (num * 100) / TOTAL_PIECES
 
-        tvStepNum.text     = "PASO ${num.toString().padStart(2, '0')}/$total"
+        tvStepNum.text     = "PIEZA ${num.toString().padStart(3, '0')}/$TOTAL_PIECES"
         tvStepPct.text     = "$pct%"
-        tvInstruction.text = step.instruction
-        tvZone.text        = "ZONA: ${step.zone}"
+        tvZone.text        = "ZONA: TECLADO DE CONTROL"
+        tvInstruction.text = "Inspeccione la pieza %03d del teclado".format(num)
 
         stepProgress.post {
             val parent = stepProgress.parent as? View ?: return@post
@@ -181,7 +124,7 @@ class TecladoActivity : AppCompatActivity() {
         }
 
         btnPrev.isEnabled = currentStep > 0
-        btnNext.isEnabled = currentStep < steps.size - 1
+        btnNext.isEnabled = currentStep < TOTAL_PIECES - 1
     }
 
     // ── Controles ─────────────────────────────────────────────────────────────
@@ -213,7 +156,7 @@ class TecladoActivity : AppCompatActivity() {
                 when (cmd) {
                     is VoiceCommand.Next     -> goToStep(currentStep + 1)
                     is VoiceCommand.Previous -> goToStep(currentStep - 1)
-                    is VoiceCommand.Repeat   -> speaker.speak(steps[currentStep].instruction)
+                    is VoiceCommand.Repeat   -> speaker.speak("Pieza ${currentStep + 1} de $TOTAL_PIECES")
                     is VoiceCommand.Zoom     -> applyZoom(+ZOOM_STEP)
                     is VoiceCommand.Rotate   -> rotateModel()
                     is VoiceCommand.Pause,
