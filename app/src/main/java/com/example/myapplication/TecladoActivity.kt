@@ -108,8 +108,6 @@ class TecladoActivity : AppCompatActivity() {
         btnPrev        = findViewById(R.id.btnPrev)
         loadingOverlay = findViewById(R.id.loadingOverlay)
 
-        lifecycle.addObserver(sceneView)
-
         bindButtons()
         setupBottomNav()
         setupVoiceCommands()

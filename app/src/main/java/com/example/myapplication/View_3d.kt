@@ -40,8 +40,6 @@ class View_3d : AppCompatActivity() {
         setContentView(R.layout.activity_view3d)
 
         sceneView = findViewById(R.id.sceneView)
-        lifecycle.addObserver(sceneView)
-
         bindButtons()
         setupBottomNav()
         setupVoiceCommands()
