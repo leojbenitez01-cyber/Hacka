@@ -11,7 +11,6 @@ import com.example.myapplication.voice.VoiceApiService
 import com.example.myapplication.voice.VoiceApiServiceStub
 import com.example.myapplication.voice.VoiceCommand
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.SceneView
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale

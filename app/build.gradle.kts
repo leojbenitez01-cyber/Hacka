@@ -46,8 +46,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.ar:core:1.43.0")
-    implementation("io.github.sceneview:arsceneview:2.2.1")
+    implementation("io.github.sceneview:arsceneview:2.2.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
 
 }
